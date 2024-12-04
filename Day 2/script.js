@@ -41,3 +41,42 @@
 
 // Day 2 Part 2
 
+fetch('inputData.txt')
+  .then(response => response.text())
+  .then(data => {
+    const reports = data.trim().split('\n').map(line => line.split(" ").map(Number));
+
+    let safeReports = 0;
+
+    const isSafe = (report) => {
+        const differences = [];
+
+        for (let i = 1; i < report.length; i++) {
+            differences.push(report[i] - report[i - 1]);
+        }
+
+        const increasing = differences.every((d) => d >= 1 && d <= 3);
+        const decreasing = differences.every((d) => d <= -1 && d >= -3);
+        
+        console.log(increasing)
+        return increasing || decreasing;
+    }
+
+    reports.forEach(report => {
+        let tolerable = false;
+
+        for (let i = 0; i < report.length; i++){
+            const removed = report.toSpliced(i, 1);
+
+            if (isSafe(removed)) {
+                tolerable = true;
+                break;
+            }
+        }
+
+        if (isSafe(report) || tolerable) safeReports++;
+        
+    })
+    console.log(safeReports)
+})
+  .catch(error => console.error('Error loading file:', error));
